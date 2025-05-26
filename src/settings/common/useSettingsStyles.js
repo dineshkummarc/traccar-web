@@ -1,12 +1,12 @@
-import { makeStyles } from '@mui/styles';
+import { makeStyles } from 'tss-react/mui';
 
-export default makeStyles((theme) => ({
+export default makeStyles()((theme) => ({
   table: {
     marginBottom: theme.spacing(10),
   },
   columnAction: {
     width: '1%',
-    paddingRight: theme.spacing(1),
+    paddingInlineEnd: theme.spacing(1),
   },
   container: {
     marginTop: theme.spacing(2),

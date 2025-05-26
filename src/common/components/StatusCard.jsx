@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
-import Draggable from 'react-draggable';
+import { Rnd } from 'react-rnd';
 import {
   Card,
   CardContent,
@@ -19,7 +19,7 @@ import {
   Link,
   Tooltip,
 } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import { makeStyles } from 'tss-react/mui';
 import CloseIcon from '@mui/icons-material/Close';
 import ReplayIcon from '@mui/icons-material/Replay';
 import PublishIcon from '@mui/icons-material/Publish';
@@ -36,7 +36,7 @@ import { devicesActions } from '../../store';
 import { useCatch, useCatchCallback } from '../../reactHelper';
 import { useAttributePreference } from '../util/preferences';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles()((theme, { desktopPadding }) => ({
   card: {
     pointerEvents: 'auto',
     width: theme.dimensions.popupMaxWidth,
@@ -55,11 +55,14 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: theme.spacing(1, 1, 0, 2),
+    paddingBlockStart: theme.spacing(1),
+    paddingBlockEnd: 0,
+    paddingInlineStart: theme.spacing(2),
+    paddingInlineEnd: theme.spacing(1),
   },
   content: {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1),
+    paddingBlockStart: theme.spacing(1),
+    paddingBlockEnd: theme.spacing(1),
     maxHeight: theme.dimensions.cardContentMaxHeight,
     overflow: 'auto',
   },
@@ -70,11 +73,11 @@ const useStyles = makeStyles((theme) => ({
   },
   table: {
     '& .MuiTableCell-sizeSmall': {
-      paddingLeft: 0,
-      paddingRight: 0,
+      paddingInlineStart: 0,
+      paddingInlineEnd: 0,
     },
-    '& .MuiTableCell-sizeSmall:first-child': {
-      paddingRight: theme.spacing(1),
+    '& .MuiTableCell-sizeSmall:first-of-type': {
+      paddingInlineEnd: theme.spacing(1),
     },
   },
   cell: {
@@ -83,25 +86,25 @@ const useStyles = makeStyles((theme) => ({
   actions: {
     justifyContent: 'space-between',
   },
-  root: ({ desktopPadding }) => ({
+  root: {
     pointerEvents: 'none',
     position: 'fixed',
     zIndex: 5,
-    left: '50%',
+    insetInlineStart: '50%',
     [theme.breakpoints.up('md')]: {
-      left: `calc(50% + ${desktopPadding} / 2)`,
-      bottom: theme.spacing(3),
+      insetInlineStart: `calc(50% + ${desktopPadding} / 2)`,
+      insetBlockEnd: theme.spacing(3),
     },
     [theme.breakpoints.down('md')]: {
-      left: '50%',
-      bottom: `calc(${theme.spacing(3)} + ${theme.dimensions.bottomBarHeight}px)`,
+      insetInlineStart: '50%',
+      insetBlockEnd: `calc(${theme.spacing(3)} + ${theme.dimensions.bottomBarHeight}px)`,
     },
     transform: 'translateX(-50%)',
-  }),
+  },
 }));
 
 const StatusRow = ({ name, content }) => {
-  const classes = useStyles();
+  const { classes } = useStyles({ desktopPadding: 0 });
 
   return (
     <TableRow>
@@ -116,7 +119,7 @@ const StatusRow = ({ name, content }) => {
 };
 
 const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPadding = 0 }) => {
-  const classes = useStyles({ desktopPadding });
+  const { classes } = useStyles({ desktopPadding });
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const t = useTranslation();
@@ -181,13 +184,16 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
     <>
       <div className={classes.root}>
         {device && (
-          <Draggable
-            handle={`.${classes.media}, .${classes.header}`}
+          <Rnd
+            default={{ x: 0, y: 0, width: 'auto', height: 'auto' }}
+            enableResizing={false}
+            dragHandleClassName="draggable-header"
+            style={{ position: 'relative' }}
           >
             <Card elevation={3} className={classes.card}>
               {deviceImage ? (
                 <CardMedia
-                  className={classes.media}
+                  className={`${classes.media} draggable-header`}
                   image={`/api/media/${device.uniqueId}/${deviceImage}`}
                 >
                   <IconButton
@@ -199,7 +205,7 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
                   </IconButton>
                 </CardMedia>
               ) : (
-                <div className={classes.header}>
+                <div className={`${classes.header} draggable-header`}>
                   <Typography variant="body2" color="textSecondary">
                     {device.name}
                   </Typography>
@@ -288,7 +294,7 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
                 </Tooltip>
               </CardActions>
             </Card>
-          </Draggable>
+          </Rnd>
         )}
       </div>
       {position && (
