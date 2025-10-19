@@ -11,6 +11,16 @@ The app uses React, Material UI and MapLibre. For more information on how to bui
 - Anton Tananaev ([anton@traccar.org](mailto:anton@traccar.org))
 - Andrey Kunitsyn ([andrey@traccar.org](mailto:andrey@traccar.org))
 
+ ## Installation
+Modern app is located in the root folder of the traccar-web repository.
+Modern web app uses React and Material UI frameworks. It relies on Vite for running and building the project with minimal additional configuration.
+To run the project in development mode:
+a. Make sure you have Traccar backend running locally
+b. Install dependencies using npm install command
+c. Run development server using npm start command
+d. We recommend using Visual Studio Code as the IDE
+e. To compile a release build, run npm run build.
+
 ## License
 
     Apache License, Version 2.0
