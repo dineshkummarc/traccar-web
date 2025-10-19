@@ -7,7 +7,6 @@ import {
 import { makeStyles } from 'tss-react/mui';
 import { useTheme } from '@mui/material/styles';
 import Drawer from '@mui/material/Drawer';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate } from 'react-router-dom';
 import MapView from '../map/core/MapView';
 import MapCurrentLocation from '../map/MapCurrentLocation';
@@ -18,6 +17,8 @@ import { devicesActions } from '../store';
 import MapPositions from '../map/MapPositions';
 import { useCatch } from '../reactHelper';
 import MapScale from '../map/MapScale';
+import BackIcon from '../common/components/BackIcon';
+import fetchOrThrow from '../common/util/fetchOrThrow';
 
 const useStyles = makeStyles()((theme) => ({
   root: {
@@ -69,13 +70,12 @@ const EmulatorPage = () => {
 
   const handleClick = useCatch(async (latitude, longitude) => {
     if (deviceId) {
-      let response;
       if (window.location.protocol === 'https:') {
         const params = new URLSearchParams();
         params.append('id', devices[deviceId].uniqueId);
         params.append('lat', latitude);
         params.append('lon', longitude);
-        response = await fetch(window.location.origin, {
+        await fetchOrThrow(window.location.origin, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -87,13 +87,10 @@ const EmulatorPage = () => {
         params.append('id', devices[deviceId].uniqueId);
         params.append('lat', latitude);
         params.append('lon', longitude);
-        response = await fetch(`http://${window.location.hostname}:5055?${params.toString()}`, {
+        await fetchOrThrow(`http://${window.location.hostname}:5055?${params.toString()}`, {
           method: 'POST',
           mode: 'no-cors',
         });
-      }
-      if (!response.ok) {
-        throw Error(await response.text());
       }
     }
   });
@@ -109,7 +106,7 @@ const EmulatorPage = () => {
         >
           <Toolbar>
             <IconButton edge="start" sx={{ mr: 2 }} onClick={() => navigate(-1)}>
-              <ArrowBackIcon />
+              <BackIcon />
             </IconButton>
             <Typography variant="h6" className={classes.title}>{t('sharedEmulator')}</Typography>
           </Toolbar>

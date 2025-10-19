@@ -4,7 +4,6 @@ import {
   Typography, AppBar, Toolbar, IconButton,
 } from '@mui/material';
 import { makeStyles } from 'tss-react/mui';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffectAsync } from '../reactHelper';
 import { useTranslation } from '../common/components/LocalizationProvider';
@@ -15,6 +14,8 @@ import MapGeofence from '../map/MapGeofence';
 import StatusCard from '../common/components/StatusCard';
 import { formatNotificationTitle } from '../common/util/formatter';
 import MapScale from '../map/MapScale';
+import BackIcon from '../common/components/BackIcon';
+import fetchOrThrow from '../common/util/fetchOrThrow';
 
 const useStyles = makeStyles()(() => ({
   root: {
@@ -49,30 +50,22 @@ const EventPage = () => {
   });
 
   const onMarkerClick = useCallback((positionId) => {
-    setShowCard(!!positionId);
+    setShowCard(Boolean(positionId));
   }, [setShowCard]);
 
   useEffectAsync(async () => {
     if (id) {
-      const response = await fetch(`/api/events/${id}`);
-      if (response.ok) {
-        setEvent(await response.json());
-      } else {
-        throw Error(await response.text());
-      }
+      const response = await fetchOrThrow(`/api/events/${id}`);
+      setEvent(await response.json());
     }
   }, [id]);
 
   useEffectAsync(async () => {
     if (event && event.positionId) {
-      const response = await fetch(`/api/positions?id=${event.positionId}`);
-      if (response.ok) {
-        const positions = await response.json();
-        if (positions.length > 0) {
-          setPosition(positions[0]);
-        }
-      } else {
-        throw Error(await response.text());
+      const response = await fetchOrThrow(`/api/positions?id=${event.positionId}`);
+      const positions = await response.json();
+      if (positions.length > 0) {
+        setPosition(positions[0]);
       }
     }
   }, [event]);
@@ -82,7 +75,7 @@ const EventPage = () => {
       <AppBar color="inherit" position="static" className={classes.toolbar}>
         <Toolbar>
           <IconButton color="inherit" edge="start" sx={{ mr: 2 }} onClick={() => navigate('/')}>
-            <ArrowBackIcon />
+            <BackIcon />
           </IconButton>
           <Typography variant="h6">{event && formatType(event)}</Typography>
         </Toolbar>

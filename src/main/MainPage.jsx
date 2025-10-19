@@ -27,7 +27,7 @@ const useStyles = makeStyles()((theme) => ({
     flexDirection: 'column',
     [theme.breakpoints.up('md')]: {
       position: 'fixed',
-      insetInlineStart: 0,
+      left: 0,
       top: 0,
       height: `calc(100% - ${theme.spacing(3)})`,
       width: theme.dimensions.drawerWidthDesktop,
@@ -50,6 +50,7 @@ const useStyles = makeStyles()((theme) => ({
   middle: {
     flex: 1,
     display: 'grid',
+    minHeight: 0,
   },
   contentMap: {
     pointerEvents: 'auto',
@@ -59,6 +60,8 @@ const useStyles = makeStyles()((theme) => ({
     pointerEvents: 'auto',
     gridArea: '1 / 1',
     zIndex: 4,
+    display: 'flex',
+    minHeight: 0,
   },
 }));
 
